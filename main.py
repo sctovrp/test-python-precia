@@ -8,15 +8,83 @@ logging.basicConfig(
     force=True,
 )
 
-df_titanic = pd.read_csv('./data/titanic.csv')
+df_titanic = pd.read_csv("./data/titanic.csv")
 
-logging.info('Dataframe has %d rows, %d columns and has %d data. \n ', df_titanic.shape[0], df_titanic.shape[1], df_titanic.shape[0] * df_titanic.shape[1])
-logging.info('Dataframe columns are: \n %s', df_titanic.dtypes)
-logging.info('Dataframe first 10 rows: \n %s', df_titanic.head(10))
-logging.info('dataframe last 10 rows: \n %s', df_titanic.tail(10))
 
-logging.info('Info of passanger with id=148: \n %s', df_titanic.loc[df_titanic['PassengerId']==148])
+def print_section_title(title: str):
+    logging.info("---------------------------------------------------------------")
+    logging.info("---------------------------------------------------------------")
+    logging.info(title.upper())
+    logging.info("---------------------------------------------------------------")
+    logging.info("---------------------------------------------------------------")
 
-logging.info('Even rows of dataframe: \n %s', df_titanic.iloc[::2])
 
-logging.info('Name of the passangers in first class: \n %s', df_titanic[df_titanic['Pclass'] == 1].sort_values(by='Name', ascending=True)['Name'] )
+def print_dataframe_info(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    rows = df.shape[0]
+    columns = df.shape[1]
+    num_values = rows * columns
+
+    column_types = df_titanic.dtypes
+
+    first_rows = df_titanic.head(10)
+    last_rows = df_titanic.tail(10)
+
+    logging.info(
+        "Dataframe has %d rows, %d columns and has %d data. \n ",
+        rows,
+        columns,
+        num_values,
+    )
+
+    logging.info("Dataframe columns are: \n %s", column_types)
+
+    logging.info("Dataframe first 10 rows: \n %s", first_rows)
+    logging.info("dataframe last 10 rows: \n %s", last_rows)
+
+
+def print_passanger_info(df: pd.DataFrame, passanger_id: int, title: str):
+    print_section_title(title)
+
+    passanger_info = df.loc[df_titanic["PassengerId"] == passanger_id]
+
+    logging.info("Info of passanger with id=148: \n %s", passanger_info)
+
+
+def print_even_rows(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    even_rows = df.iloc[::2]
+
+    logging.info("Even rows of dataframe: \n %s", even_rows)
+
+
+def print_first_class(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    first_class = df[df["Pclass"] == 1]
+    sorted_first_class = first_class.sort_values(by="Name", ascending=True)
+    names = sorted_first_class["Name"]
+
+    logging.info("Sorted names of the passangers in first class: \n %s", names)
+
+
+def print_survivors(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    
+
+
+
+
+
+
+
+
+
+print_dataframe_info(df_titanic, "dataframe general info")
+print_passanger_info(df_titanic, 148, "passanger 148 info")
+print_even_rows(df_titanic, "even rows")
+print_first_class(df_titanic, "sorted names of first class passangers")
+print_survivors(df_titanic, "percentage of survivors")
