@@ -73,7 +73,12 @@ def print_first_class(df: pd.DataFrame, title: str):
 def print_survivors(df: pd.DataFrame, title: str):
     print_section_title(title)
 
-    
+    survivor = df[df['Survived'] == 1]
+    percentage = survivor.shape[0] / df.shape[0]
+
+    logging.info("%.2f%% survived. \n ", percentage * 100)
+    logging.info("%.2f%% didn't survived. \n ", 100 - (percentage * 100))
+
 
 
 
