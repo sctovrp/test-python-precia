@@ -28,6 +28,6 @@ logging.basicConfig(
 
 You can also rename log file in the line 9.
 
-### Prueba Dev Python Junior Precia - answers.pdf
+### /Prueba Dev Python Junior Precia - answers.pdf
 
 Modified file with the answers to the questions.
