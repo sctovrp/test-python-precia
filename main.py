@@ -79,6 +79,15 @@ def print_survivors(df: pd.DataFrame, title: str):
     logging.info("%.2f%% survived. \n ", percentage * 100)
     logging.info("%.2f%% didn't survived. \n ", 100 - (percentage * 100))
 
+def print_survivors_per_class(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    survivors_per_class = pd.pivot_table(df, values='Survived', index='Pclass', aggfunc='mean')
+
+    logging.info("Percentage per class survivors: \n %s", survivors_per_class)
+    
+
+
 
 
 
@@ -93,3 +102,4 @@ print_passanger_info(df_titanic, 148, "passanger 148 info")
 print_even_rows(df_titanic, "even rows")
 print_first_class(df_titanic, "sorted names of first class passangers")
 print_survivors(df_titanic, "percentage of survivors")
+print_survivors_per_class(df_titanic, "percentage of class survivors per class")
