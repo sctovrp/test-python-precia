@@ -6,6 +6,8 @@ logging.basicConfig(
     datefmt="%d-%b-%y %H:%M:%S",
     level=logging.INFO,
     force=True,
+    # filename='out/app.log', # uncomment for mod log file
+    # filemode='w'
 )
 
 df_titanic = pd.read_csv("./data/titanic.csv")
@@ -32,16 +34,16 @@ def print_dataframe_info(df: pd.DataFrame, title: str):
     last_rows = df_titanic.tail(10)
 
     logging.info(
-        "Dataframe has %d rows, %d columns and has %d data. \n ",
+        "Dataframe has %d rows, %d columns and has %d data.",
         rows,
         columns,
         num_values,
     )
 
-    logging.info("Dataframe columns are: \n %s", column_types)
+    logging.info("Dataframe columns are: \n%s", column_types)
 
-    logging.info("Dataframe first 10 rows: \n %s", first_rows)
-    logging.info("dataframe last 10 rows: \n %s", last_rows)
+    logging.info("Dataframe first 10 rows: \n%s", first_rows)
+    logging.info("dataframe last 10 rows: \n%s", last_rows)
 
 
 def print_passanger_info(df: pd.DataFrame, passanger_id: int, title: str):
@@ -49,7 +51,7 @@ def print_passanger_info(df: pd.DataFrame, passanger_id: int, title: str):
 
     passanger_info = df.loc[df_titanic["PassengerId"] == passanger_id]
 
-    logging.info("Info of passanger with id=148: \n %s", passanger_info)
+    logging.info("Info of passanger with id 148: \n%s", passanger_info)
 
 
 def print_even_rows(df: pd.DataFrame, title: str):
@@ -67,7 +69,7 @@ def print_first_class(df: pd.DataFrame, title: str):
     sorted_first_class = first_class.sort_values(by="Name", ascending=True)
     names = sorted_first_class["Name"]
 
-    logging.info("Sorted names of the passangers in first class: \n %s", names)
+    logging.info("Sorted names of the passangers in first class: \n%s", names)
 
 
 def print_survivors(df: pd.DataFrame, title: str):
@@ -76,8 +78,8 @@ def print_survivors(df: pd.DataFrame, title: str):
     survivor = df[df['Survived'] == 1]
     percentage = survivor.shape[0] / df.shape[0]
 
-    logging.info("%.2f%% survived. \n ", percentage * 100)
-    logging.info("%.2f%% didn't survived. \n ", 100 - (percentage * 100))
+    logging.info("%.2f%% survived.", percentage * 100)
+    logging.info("%.2f%% didn't survived.", 100 - (percentage * 100))
 
 def print_survivors_per_class(df: pd.DataFrame, title: str):
     print_section_title(title)
@@ -85,9 +87,11 @@ def print_survivors_per_class(df: pd.DataFrame, title: str):
     survivors_per_class = pd.pivot_table(df, values='Survived', index='Pclass', aggfunc="mean")
     survivors_per_class["Survived"] = survivors_per_class['Survived'] * 100
 
-    format_mapping = { "Survived": "{:.2f}%" }
+    survivors_per_class.reset_index(inplace=True)
 
-    logging.info("Percentage per class survivors: \n %s", survivors_per_class.style.format(format_mapping).to_string())
+    format_mapping = '{Survived:.2f}% survived in class {Pclass:.0f}.'.format
+
+    survivors_per_class.apply(lambda x: logging.info(format_mapping(**x)), 1)
     
 
 def delete_unknown_age(df: pd.DataFrame, title: str):
@@ -97,7 +101,7 @@ def delete_unknown_age(df: pd.DataFrame, title: str):
     df = df.dropna(subset=['Age'])
     new_size = df.shape[0]
 
-    logging.info("New dataframe has %d rows. %d were deleted \n", new_size, prev_size - new_size)
+    logging.info("New dataframe has %d rows. %d were deleted.", new_size, prev_size - new_size)
 
 
 def print_median_age(df: pd.DataFrame, title: str):
@@ -107,9 +111,11 @@ def print_median_age(df: pd.DataFrame, title: str):
 
     average_age_per_class = pd.pivot_table(female_passangers, values='Age', index='Pclass', aggfunc='mean')
 
-    format_mapping = { "Age": "{:.1f}" }
+    average_age_per_class.reset_index(inplace=True)
 
-    logging.info("Average age of women per class: \n %s", average_age_per_class.style.format(format_mapping).to_string())
+    format_mapping = 'The mean woman age in class {Pclass:.0f} is: {Age:.1f}.'.format
+
+    average_age_per_class.apply(lambda x: logging.info(format_mapping(**x)), 1)
 
 
 def add_underage_column(df: pd.DataFrame, title: str):
