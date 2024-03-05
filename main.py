@@ -82,19 +82,58 @@ def print_survivors(df: pd.DataFrame, title: str):
 def print_survivors_per_class(df: pd.DataFrame, title: str):
     print_section_title(title)
 
-    survivors_per_class = pd.pivot_table(df, values='Survived', index='Pclass', aggfunc='mean')
+    survivors_per_class = pd.pivot_table(df, values='Survived', index='Pclass', aggfunc="mean")
+    survivors_per_class["Survived"] = survivors_per_class['Survived'] * 100
 
-    logging.info("Percentage per class survivors: \n %s", survivors_per_class)
+    format_mapping = { "Survived": "{:.2f}%" }
+
+    logging.info("Percentage per class survivors: \n %s", survivors_per_class.style.format(format_mapping).to_string())
     
 
+def delete_unknown_age(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    prev_size = df.shape[0]
+    df = df.dropna(subset=['Age'])
+    new_size = df.shape[0]
+
+    logging.info("New dataframe has %d rows. %d were deleted \n", new_size, prev_size - new_size)
 
 
+def print_median_age(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    female_passangers = df[df["Sex"] == "female"]
+
+    average_age_per_class = pd.pivot_table(female_passangers, values='Age', index='Pclass', aggfunc='mean')
+
+    format_mapping = { "Age": "{:.1f}" }
+
+    logging.info("Average age of women per class: \n %s", average_age_per_class.style.format(format_mapping).to_string())
 
 
+def add_underage_column(df: pd.DataFrame, title: str):
+    print_section_title(title)
+
+    df["Underage"] = df["Age"] < 18
+
+    logging.info("Added new column Underage: \n %s", df)
 
 
+def print_age_survivors(df: pd.DataFrame, title: str):
+    print_section_title(title)
 
+    average_underage_per_class = pd.pivot_table(df, values='Survived', index=["Pclass", "Underage"], aggfunc='mean')
+    average_underage_per_class["Survived"] = average_underage_per_class['Survived'] * 100
+    
+    average_underage_per_class.reset_index(inplace=True)
 
+    average_underage_per_class["Underage"] = average_underage_per_class["Underage"].apply(lambda isUnderage: "underages" if isUnderage else "majors")
+
+    format_mapping = '{Survived:.2f}% of {Underage} in class {Pclass} survived.'.format
+
+    average_underage_per_class.apply(lambda x: logging.info(format_mapping(**x)), 1)
+  
 
 
 print_dataframe_info(df_titanic, "dataframe general info")
@@ -103,3 +142,7 @@ print_even_rows(df_titanic, "even rows")
 print_first_class(df_titanic, "sorted names of first class passangers")
 print_survivors(df_titanic, "percentage of survivors")
 print_survivors_per_class(df_titanic, "percentage of class survivors per class")
+delete_unknown_age(df_titanic, "delete unknown age")
+print_median_age(df_titanic, "average age of women per class")
+add_underage_column(df_titanic, "add underage column")
+print_age_survivors(df_titanic, "percentage underage survivor per class")
