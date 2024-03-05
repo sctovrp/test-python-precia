@@ -14,3 +14,5 @@ logging.info('Dataframe has %d rows, %d columns and has %d data. \n ', df_titani
 logging.info('Dataframe columns are: \n %s', df_titanic.dtypes)
 logging.info('Dataframe first 10 rows: \n %s', df_titanic.head(10))
 logging.info('dataframe last 10 rows: \n %s', df_titanic.tail(10))
+
+logging.info('Info of passanger with id=148: \n %s', df_titanic.loc[df_titanic['PassengerId']==148])
