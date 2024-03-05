@@ -16,3 +16,5 @@ logging.info('Dataframe first 10 rows: \n %s', df_titanic.head(10))
 logging.info('dataframe last 10 rows: \n %s', df_titanic.tail(10))
 
 logging.info('Info of passanger with id=148: \n %s', df_titanic.loc[df_titanic['PassengerId']==148])
+
+logging.info('Even rows of dataframe: \n %s', df_titanic.iloc[::2])
